@@ -83,16 +83,34 @@ namespace LCS.Gui
                 this.nameWarningLabel.Visible = true;
             }
 
-            if (!service.setAddress(this.startAddress.Text))
+
+
+            if (service.setAll(this.channels.Text, this.startAddress.Text) == 1)
             {
-                this.addressWarningLabel.Visible = true;
+
             }
 
-            if (!service.setChannels(this.channels.Text))
+            else if (service.setAll(this.channels.Text, this.startAddress.Text) == 2)
             {
+
+                this.channelWarningLabel.Text = "#address+#channel <=512";
+
+                this.channelWarningLabel.Visible = true;
+            }
+
+            else if (service.setAll(this.channels.Text, this.startAddress.Text) == 3)
+            {
+                this.addressWarningLabel.Visible = true;
                 this.channelWarningLabel.Visible = true;
             }
             service.startMain();
         }
     }
 }
+
+
+
+
+
+
+

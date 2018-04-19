@@ -103,7 +103,7 @@ namespace LCS.Logic
          * True if the app is in time transition mode
          */
         private bool inTransition = false;
-        
+
 
         /*
          * Constructor class
@@ -128,8 +128,9 @@ namespace LCS.Logic
         /*
          * Hide the input form, open the main form and initialize values for main form
          */
-        public void startMain() {
-            if(this.fixtureName == null || this.startAddress == -1 || this.numOfChannels == -1)
+        public void startMain()
+        {
+            if (this.fixtureName == null || this.startAddress == -1 || this.numOfChannels == -1)
             {
                 //if any input is not valid, return
                 return;
@@ -204,6 +205,35 @@ namespace LCS.Logic
             }
             return false;
         }
+        public int setAll(String inputChannels, String inputAddress)
+        {
+            int channels;
+            bool valid = int.TryParse(inputChannels, out channels);
+
+            int address;
+            bool valid2 = int.TryParse(inputAddress, out address);
+            if (valid && channels > 0 && MAX_CHANNELS >= channels && valid2 && address > 0 && MAX_ADDRESS >= address)
+            {
+                if (channels + address <= 512)
+                {
+                    this.numOfChannels = channels;
+                    this.startAddress = address;
+                    return 1; //normal pass 1
+                }
+                else
+                {
+                    return 2; //fail at exceed 512
+                }
+
+            }
+            else
+            {
+                return 3; //failed at condition 1 or 2 
+            }
+
+
+        }
+
 
         /*
          * Check if the input string is a valid start address
@@ -232,7 +262,7 @@ namespace LCS.Logic
         */
         public bool setName(String name)
         {
-            if(name != "")
+            if (name != "")
             {
                 this.fixtureName = name;
                 return true;
@@ -290,7 +320,7 @@ namespace LCS.Logic
          */
         public void setSceneValue(string[,] data)
         {
-            for(int i = 0; i < currentSceneValue.Length; i++)
+            for (int i = 0; i < currentSceneValue.Length; i++)
             {
                 //convert the current scene value in data to int and store in currentSceneValue
                 //i >> 1 calculates the exact index of current scene value in data array
@@ -310,12 +340,13 @@ namespace LCS.Logic
             this.setSceneValue(this.mainForm.getData());
             //TODO control the light by passing currentSceneValue array like example below
             //someMethod(currentSceneValue) whereas currentSceneValue is an array if int stores all values of the slider
-            for(int i = 0; i < currentSceneValue.Length; i++){
-                 OpenDMX.setDmxValue((startAddress - 1 + i),Convert.ToByte(currentSceneValue[i]));
+            for (int i = 0; i < currentSceneValue.Length; i++)
+            {
+                OpenDMX.setDmxValue((startAddress - 1 + i), Convert.ToByte(currentSceneValue[i]));
             }
-           // Console.WriteLine(System.DateTime.Now);
-           // Console.WriteLine(currentSceneValue[0] + "---" + currentSceneValue[1]
-           //     + "---" + currentSceneValue[2] + "---" + currentSceneValue[3] + "---" + currentSceneValue[4]);
+            // Console.WriteLine(System.DateTime.Now);
+            // Console.WriteLine(currentSceneValue[0] + "---" + currentSceneValue[1]
+            //     + "---" + currentSceneValue[2] + "---" + currentSceneValue[3] + "---" + currentSceneValue[4]);
         }
 
         /*
@@ -334,12 +365,13 @@ namespace LCS.Logic
             //Console.WriteLine(currentPhrase+"---"+transitionData[currentPhrase][0] + "---" + transitionData[currentPhrase][1]
             //   + "---" + transitionData[currentPhrase][2] + "---" + transitionData[currentPhrase][3] + "---" + transitionData[currentPhrase][4]);
             //update current transition phrase
-            for(int i = 0; i < currentSceneValue.Length; i++){
-                OpenDMX.setDmxValue((startAddress -1 + i),Convert.ToByte(transitionData[currentPhrase][i]));
+            for (int i = 0; i < currentSceneValue.Length; i++)
+            {
+                OpenDMX.setDmxValue((startAddress - 1 + i), Convert.ToByte(transitionData[currentPhrase][i]));
             }
             this.nextPhrase();
 
-          //  Console.WriteLine(System.DateTime.Now);
+            //  Console.WriteLine(System.DateTime.Now);
         }
 
         /*
@@ -348,7 +380,7 @@ namespace LCS.Logic
         public void nextPhrase()
         {
             currentPhrase++;
-            if(phraseTime == transitionPhrase)
+            if (phraseTime == transitionPhrase)
             {
                 //there are two phrases if the transitionTime is smaller than transitionPhrase
                 if (currentPhrase >= 2)
@@ -356,7 +388,7 @@ namespace LCS.Logic
                     currentPhrase = 0;
                 }
             }
-            else if(currentPhrase >= transitionPhrase)
+            else if (currentPhrase >= transitionPhrase)
             {
                 currentPhrase = 0;
             }
@@ -367,7 +399,7 @@ namespace LCS.Logic
          */
         public void calculateTransition()
         {
-            if(transitionTime > 400)
+            if (transitionTime > 400)
             {
                 transitionPhrase = (transitionTime / 100);
             }
@@ -385,7 +417,7 @@ namespace LCS.Logic
             //reset current phrase
             this.currentPhrase = 0;
             //phrases during one transition
-            for(int i = 0; i < transitionPhrase; i++)
+            for (int i = 0; i < transitionPhrase; i++)
             {
                 int[] phrase = new int[numOfChannels];
                 transitionData.Add(phrase);
@@ -394,11 +426,11 @@ namespace LCS.Logic
             {
                 int currValue = currentSceneValue[i];
                 int nextValue = nextSceneValue[i];
-                int change = (int)Math.Round((nextValue - currValue) / (double)(transitionPhrase-1), 0);
+                int change = (int)Math.Round((nextValue - currValue) / (double)(transitionPhrase - 1), 0);
                 //calculate and store all data for all phrases in transitionData
                 for (int j = 0; j < transitionPhrase; j++)
                 {
-                    if(j == transitionPhrase - 1)
+                    if (j == transitionPhrase - 1)
                     {
                         transitionData[j][i] = nextValue;
                         break;

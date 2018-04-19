@@ -214,7 +214,7 @@ namespace LCS.Logic
             bool valid2 = int.TryParse(inputAddress, out address);
             if (valid && channels > 0 && MAX_CHANNELS >= channels && valid2 && address > 0 && MAX_ADDRESS >= address)
             {
-                if (channels + address <= 512)
+                if (channels + address < 512)
                 {
                     this.numOfChannels = channels;
                     this.startAddress = address;

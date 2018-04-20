@@ -93,7 +93,7 @@ namespace LCS.Gui
             else if (service.setAll(this.channels.Text, this.startAddress.Text) == 2)
             {
 
-                this.channelWarningLabel.Text = "#address+#channel <512";
+                this.channelWarningLabel.Text = "#address+#channel <514";
 
                 this.channelWarningLabel.Visible = true;
             }
